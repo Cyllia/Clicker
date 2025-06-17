@@ -2,9 +2,23 @@ let cor = 0;
 let corPerClick = 1;
 let corPerSecond = 0;
 
+// Prix de base pour chaque item
+const basePrices = [50, 51, 55, 60, 64, 70, 73, 75, 80];
+// Prix courant pour chaque item (sera doublé à chaque achat)
+const currentPrices = [...basePrices];
+
+// Pour mettre à jour le prix affiché sur chaque bouton
+function updateShopPrices() {
+  document.querySelectorAll(".shop .item button").forEach((btn, i) => {
+    // Remplace le prix affiché dans le texte du bouton
+    btn.innerHTML = btn.innerHTML.replace(/-\d+ cor/, `-${currentPrices[i]} cor`);
+  });
+}
+
 const corDisplay = document.getElementById("cor");
 const clickButton = document.getElementById("click-button");
 const clickPowerDisplay = document.getElementById("click-power");
+const popContainer = document.getElementById("pop-container");
 
 // Affichage du click power
 function updateDisplay() {
@@ -12,84 +26,66 @@ function updateDisplay() {
   clickPowerDisplay.textContent = `+${corPerClick} cor/clic`;
 }
 
-// Clic principal
+// Clic principal avec effet pop
 clickButton.addEventListener("click", () => {
   cor += corPerClick;
   updateDisplay();
+
+  // Création du pop
+  const pop = document.createElement("span");
+  pop.className = "cor-pop";
+  pop.textContent = `+${corPerClick}`;
+  pop.style.left = "50%";
+  pop.style.top = "50%";
+  popContainer.appendChild(pop);
+
+  setTimeout(() => {
+    pop.style.opacity = 0;
+    pop.style.transform = "translateY(-30px)";
+  }, 10);
+  setTimeout(() => {
+    pop.remove();
+  }, 800);
 });
 
-// Fonctions d'achat pour chaque item
-function buyAuto() {
-  if (cor >= 50) {
-    cor -= 50;
-    corPerSecond += 1;
-    updateDisplay();
-  }
-}
-
-function buyClick(amount = 1, cost = 30) {
-  if (cor >= cost) {
-    cor -= cost;
-    corPerClick += amount;
-    updateDisplay();
-  }
-}
-
-// Associer chaque bouton à la bonne fonction et valeurs
+// Gestion des achats avec augmentation du prix
 document.querySelectorAll(".shop .item button").forEach((btn, i) => {
   btn.onclick = () => {
-    switch (i) {
-      case 0: // Silica
-        if (cor >= 50) {
-          cor -= 50;
+    if (cor >= currentPrices[i]) {
+      cor -= currentPrices[i];
+      switch (i) {
+        case 0: // Silica
           corPerSecond += 1;
-          updateDisplay();
-        }
-        break;
-      case 1: // Pina
-        buyClick(2, 51);
-        break;
-      case 2: // Agil
-        if (cor >= 55) {
-          cor -= 55;
+          break;
+        case 1: // Pina
+          corPerClick += 2;
+          break;
+        case 2: // Agil
           corPerSecond += 5;
-          updateDisplay();
-        }
-        break;
-      case 3: // Lisbeth
-        buyClick(6, 60);
-        break;
-      case 4: // Klein
-        if (cor >= 64) {
-          cor -= 64;
+          break;
+        case 3: // Lisbeth
+          corPerClick += 6;
+          break;
+        case 4: // Klein
           corPerSecond += 10;
-          updateDisplay();
-        }
-        break;
-      case 5: // Heatcliff
-        if (cor >= 70) {
-          cor -= 70;
+          break;
+        case 5: // Heatcliff
+          corPerSecond += 15;
+          break;
+        case 6: // Yui
+          corPerClick += 15;
+          break;
+        case 7: // Asuna
           corPerSecond += 20;
-          updateDisplay();
-        }
-        break;
-      case 6: // Yui
-        buyClick(22, 73);
-        break;
-      case 7: // Asuna
-        if (cor >= 75) {
-          cor -= 75;
+          break;
+        case 8: // Kirito
           corPerSecond += 25;
-          updateDisplay();
-        }
-        break;
-      case 8: // Kirito
-        if (cor >= 80) {
-          cor -= 80;
-          corPerSecond += 30;
-          updateDisplay();
-        }
-        break;
+          break;
+      }
+      // Double le prix pour le prochain achat
+      currentPrices[i] *= 2;
+      updateDisplay();
+      updateShopPrices();
     }
   };
 });
@@ -102,3 +98,44 @@ setInterval(() => {
 
 // Initialisation de l'affichage
 updateDisplay();
+updateShopPrices();
+
+const ragoutRabbit = document.getElementById("ragout-rabbit");
+
+function showRagoutRabbit() {
+  if (!ragoutRabbit) return;
+
+  // Position aléatoire dans la left-panel (en %)
+  const left = Math.random() * 60 + 10; // entre 10% et 70%
+  const top = Math.random() * 40 + 40;  // entre 40% et 80%
+  ragoutRabbit.style.left = `${left}%`;
+  ragoutRabbit.style.top = `${top}%`;
+
+  ragoutRabbit.style.display = "block";
+
+  function onRabbitClick() {
+    const bonus = Math.floor(Math.random() * 26) + 5; // 5 à 30 inclus
+    cor += bonus;
+    updateDisplay();
+    ragoutRabbit.style.display = "none";
+    clearTimeout(hideTimeout);
+    ragoutRabbit.removeEventListener("click", onRabbitClick);
+  }
+
+  const hideTimeout = setTimeout(() => {
+    ragoutRabbit.style.display = "none";
+    ragoutRabbit.removeEventListener("click", onRabbitClick);
+  }, 15000);
+
+  ragoutRabbit.addEventListener("click", onRabbitClick);
+}
+
+function randomRabbitSpawnLoop() {
+  const nextTime = Math.random() * 60000 + 30000; // entre 30s et 90s
+  setTimeout(() => {
+    showRagoutRabbit();
+    randomRabbitSpawnLoop();
+  }, nextTime);
+}
+
+randomRabbitSpawnLoop();

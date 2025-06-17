@@ -1,19 +1,46 @@
 body {
   font-family: Arial, sans-serif;
-  background: #1e1e2f;
+  background: #2b6cb0;
   color: #eee;
   text-align: center;
   padding: 20px;
+  overflow: hidden;
 }
 
 h1{
     color: #ffffff;
     text-align: center;
+    font-family: Courier New, Courier, monospace;
 }
+
+.main-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 40px;
+}
+
+.left-panel {
+  position: relative;
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  height: 60vh;
+  width: 95vh;
+}
+
+.right-panel {
+  flex: 0 0 260px;
+  max-width: 730px;
+}
+
 
 .counter {
   font-size: 2.6rem;
-  margin: 20px 0;
+  margin: 50px 0;
 }
 
 button {
@@ -27,21 +54,19 @@ button {
   background: none;
 }
 
-button:hover {
-  background: #3a3abf;
-}
-
 .shop {
   display: grid;
-  justify-content: center;
-  gap: 30px;
+  justify-content: end;
+  gap: 8px;
   margin-top: 20px;
   grid-template-columns: repeat(3, 1fr);
+  max-height: 540px;
+  overflow-y: auto;
 }
 
 .item {
   display: grid;
-  background: #2a2a3a;
+  background: #63b3ed;
   padding: 15px;
   border-radius: 10px;
   width: 200px;
@@ -73,4 +98,35 @@ button:hover {
 #Heatcliff {
   width: 150px;
   height: 220px;
+}
+
+#ragout-rabbit {
+  display:none;
+  position:absolute;
+  left:50%; top:70%;
+  transform:translate(-50%,0);
+  cursor:pointer;
+  z-index:20;
+  width:70px;
+}
+
+#pop-container {
+  position: relative;
+  width: 0;
+  height: 0;
+  display: inline-block;
+}
+
+.cor-pop {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, 0);
+  color: gold;
+  font-weight: bold;
+  font-size: 1.2em;
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 0.7s, transform 0.7s;
+  z-index: 10;
 }
